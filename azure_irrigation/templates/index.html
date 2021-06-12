@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" type="text/css" href="/static/style.css">
+        <link rel="shortcut icon" href="#">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Evapotranspiration modelling</title>
+        <!-- JavaScript Bundle with Popper -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js"></script>
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+        <script src="https://d3js.org/d3.v6.js"></script>
+
+    </head>
+    <body>
+        
+        <h1 style="background-color:DodgerBlue; text-align:center; padding: 15px;"> UAV Imagery, Crop Evapotranspiration Simulation and Modelling </h1>
+
+        <div class=container>
+            <div class="d-flex justify-content-center">
+                <div class="cloud-upload">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="card" style="width:200px">
+                                <div class="card-body ">
+                                    <form action="/upload" method="POST" enctype="multipart/form-data">
+                                        <p class="card-text">Upload Stitched Multispectral Image</p>
+                                        <input type="file" name="file" value="file" align="right">
+                                        <hr>
+                                        <input type="submit" name="upload" value="Upload" class="btn btn-success">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="card" style="width:200px">
+                                <div class="card-body ">
+                                    <form action="/upload" method="POST" enctype="multipart/form-data">
+                                        <p class="card-text">Upload Stitched Thermal Image</p>
+                                        <input type="file" name="file" value="file" align="right">
+                                        <hr>
+                                        <input type="submit" name="upload" value="Upload" class="btn btn-success">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="card" style="width:200px">
+                                <div class="card-body ">
+                                    <form action="/upload" method="POST" enctype="multipart/form-data">
+                                        <p class="card-text">Upload stitched RGB-D Image</p>
+                                        <input type="file" name="file" value="file" align="right">
+                                        <hr>
+                                        <input type="submit" name="upload" value="Upload" class="btn btn-success">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-center">
+            <p><a href=calculate><button class="btn btn-primary" style="height: 50px;width:180px;margin:5px;"data-toggle="button" aria-pressed="true" autocomplete="off">Calculate Reference ET</button></a>
+            <a href=calculateWR><button class="btn btn-primary" style="height: 50px;width:180px;margin:5px;"data-toggle="button" aria-pressed="true" autocomplete="off">Calculate Irrigation Requirement</button></a></p>
+        </div>
+        <hr>
+        <div id="wrapper" style="width: auto;">
+            <canvas id="canvas" style="margin-left: 100px; margin-right:50px;">
+            </canvas>
+        </div>
+        <script>
+            d3.csv('/static/data.csv').then(function(loadedData){
+                let labels = [];
+                let title = 'No Data';
+                let Zone1 = [];
+                let Zone2 =[];
+                let Zone3 =[];
+                let Zone4 =[];
+                let Zone5 =[];
+                let Zone6 =[];
+                let Zone7 =[];
+                let Zone8 =[];
+                //console.log(loadedData)
+
+                for (let i = 0; i <loadedData.length; i++){
+                    let year = loadedData[i].DOY;
+                    labels.push(year);
+                    let firstzone = loadedData[i].Z1;
+                    let secondzone = loadedData[i].Z2;
+                    let thirdzone = loadedData[i].Z3;
+                    let fourthzone = loadedData[i].Z4;
+                    let fifthzone = loadedData[i].Z5;
+                    let sixthzone = loadedData[i].Z6;
+                    let seventhzone = loadedData[i].Z7;
+                    let eightzone = loadedData[i].Z8;
+                    Zone1.push(firstzone);
+                    Zone2.push(secondzone);
+                    Zone3.push(thirdzone);
+                    Zone4.push(fourthzone);
+                    Zone5.push(fifthzone);
+                    Zone6.push(sixthzone);
+                    Zone7.push(seventhzone);
+                    Zone8.push(eightzone);
+                    //console.log(year);
+                }
+
+                let options ={
+                    type : 'line',
+
+                    data : {
+                        labels : labels,
+                        
+                        // Add datasets here
+                        datasets: [{
+                            data:Zone1,
+                            label: 'Zone 1 ET',
+                            fill: true,
+                            borderColor: 'rgb(255,150,0)'
+                        },{
+                            data:Zone2,
+                            label:'Zone 2 ET',
+                            fill: false,
+                            borderColor: 'rgb(0,150,255)'
+                        },{
+                            data:Zone3,
+                            label:'Zone 3 ET',
+                            fill: false,
+                            borderColor: 'rgb(90,50,255)'
+
+                        },{
+                            data:Zone4,
+                            label:'Zone 4 ET',
+                            fill: false,
+                            borderColor: 'rgb(50,10,155)'
+
+                        },{
+                            data:Zone5,
+                            label:'Zone 5 ET',
+                            fill: false,
+                            borderColor: 'rgb(30,50,180)'
+                        },{
+                            data:Zone6,
+                            label:'Zone 6 ET',
+                            fill: false,
+                            borderColor: 'rgb(90,150,195)'
+                        },{
+                            data:Zone7,
+                            label:'Zone 7 ET',
+                            fill: false,
+                            borderColor: 'rgb(90,50,255)'
+                        },{
+                            data:Zone8,
+                            label:'Zone 8 ET',
+                            fill: false,
+                            borderColor: 'rgb(200,250,155)'
+                        }
+                    ]
+                    },
+                    options: {
+                        responsive:true,
+                        plugins:{
+                            title:{
+                                display:true,
+                                text: 'Evapotransipration for year 2020'
+                            }
+                        },
+                        interaction:{
+                            mode:'index',
+                            intersect: false
+
+                        },
+                        scales:{
+                            x:{
+                                display:true,
+                                title:{
+                                    display:true,
+                                    text:'Day of Year 2020'
+                                }
+                            },
+                            y:{
+                                display:true,
+                                title:{
+                                    display:true,
+                                    text:'Daily Transpiration for year 2020'
+                                }
+                            },
+                            
+                            
+                        }
+                    }
+                }
+                // we can create our chart now 
+                let chart1 =new Chart(document.getElementById('canvas'),options)
+            });
+            //chart1.render();
+            //chart2.render();
+
+        </script>
+    </body>
+</html>
