@@ -8,4 +8,4 @@ RUN pip install --upgrade pip && \
     pip install Werkzeug
 
 EXPOSE 8080
-CMD ["python", "/code/waitress_server.py"]
+CMD ["python", "/waitress_server.py"]

@@ -12,10 +12,6 @@ container = app.config['CONTAINER'] # Container name
 allowed_ext = app.config['ALLOWED_EXTENSIONS'] # List of accepted extensions
 
 blob_service_client = BlobServiceClient.from_connection_string(connect_str)
-
-
-
-    
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in allowed_ext
@@ -37,9 +33,6 @@ def upload():
                         pass
                 os.remove(filename)
     return render_template("index.html")
-
-       
-
 @app.route('/')
 def home():
     return render_template('index.html')
