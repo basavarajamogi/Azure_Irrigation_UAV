@@ -34,5 +34,5 @@ jobs:
       with:
         app-name: uavirrigation
         slot-name: Production
-        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2E397FB1F12B400983E0E2C62EB6476C }}
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_94B5517B2948443CB1911252D52B51E8 }}
 
