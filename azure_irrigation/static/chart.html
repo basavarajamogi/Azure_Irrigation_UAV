@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" type="text/css" href="/static/style.css">
+        <link rel="shortcut icon" href="#">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Evapotranspiration modelling</title>
+        <!-- JavaScript Bundle with Popper -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js"></script>
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+        <script src="https://d3js.org/d3.v6.js"></script>
+
+    </head>
+    <body>
+        
+        <h1 style="background-color:DodgerBlue; text-align:center; padding: 10px;"> Basal crop coefficient  </h1>
+        <div id="wrapper1"  style="width: auto;" >
+            <canvas id = "canvas2" style="margin-left: 80px;  margin-right:50px;">
+
+            </canvas>
+        </div>
+        <script>
+            d3.csv('/static/data1.csv').then(function(loadedData1){
+                let labels1 = [];
+                let title1 = 'Ne Data1';
+                let Zone1ETr = [];
+                let Zone2ETr =[];
+                let Zone3ETr =[];
+                let Zone4ETr =[];
+                let Zone5ETr =[];
+                let Zone6ETr =[];
+                let Zone7ETr =[];
+                let Zone8ETr =[];
+                //console.log(loadedData1)
+
+                for (let i = 0; i <loadedData1.length; i++){
+                    let year1 = loadedData1[i].DOY;
+                    labels1.push(year1);
+                    let firstzoneETr = loadedData1[i].Z1;
+                    let secondzoneETr = loadedData1[i].Z2;
+                    let thirdzoneETr = loadedData1[i].Z3;
+                    let fourthzoneETr = loadedData1[i].Z4;
+                    let fifthzoneETr = loadedData1[i].Z5;
+                    let sixthzoneETr = loadedData1[i].Z6;
+                    let seventhzoneETr = loadedData1[i].Z7;
+                    let eightzoneETr = loadedData1[i].Z8;
+                    Zone1ETr.push(firstzoneETr);
+                    Zone2ETr.push(secondzoneETr);
+                    Zone3ETr.push(thirdzoneETr);
+                    Zone4ETr.push(fourthzoneETr);
+                    Zone5ETr.push(fifthzoneETr);
+                    Zone6ETr.push(sixthzoneETr);
+                    Zone7ETr.push(seventhzoneETr);
+                    Zone8ETr.push(eightzoneETr);
+                    console.log(year1);
+                }
+
+                let options ={
+                    type : 'line',
+
+                    data : {
+                        labels : labels1,
+                        
+                        // Add datasets here
+                        datasets: [{
+                            data:Zone1ETr,
+                            label: 'Zone 1 ETr',
+                            fill: false,
+                            borderColor: 'rgb(255,150,0)'
+                        },{
+                            data:Zone2ETr,
+                            label:'Zone 2 ETr',
+                            fill: false,
+                            borderColor: 'rgb(0,150,255)'
+                        },{
+                            data:Zone3ETr,
+                            label:'Zone 3 ETr',
+                            fill: false,
+                            borderColor: 'rgb(90,50,255)'
+
+                        },{
+                            data:Zone4ETr,
+                            label:'Zone 4 ETr',
+                            fill: false,
+                            borderColor: 'rgb(50,10,155)'
+
+                        },{
+                            data:Zone5ETr,
+                            label:'Zone 5 ETr',
+                            fill: false,
+                            borderColor: 'rgb(30,50,180)'
+                        },{
+                            data:Zone6ETr,
+                            label:'Zone 6 ETr',
+                            fill: false,
+                            borderColor: 'rgb(90,150,195)'
+                        },{
+                            data:Zone7ETr,
+                            label:'Zone 7 ETr',
+                            fill: false,
+                            borderColor: 'rgb(90,50,255)'
+                        },{
+                            data:Zone8ETr,
+                            label:'Zone 8 ETr',
+                            fill: false,
+                            borderColor: 'rgb(200,250,155)'
+                        }
+                    ]
+                    },
+                    options: {
+                        responsive:true,
+                        plugins:{
+                            title:{
+                                display:true,
+                                text: 'Reference Evapotransipration for year 2020 '
+                            }
+                        },
+                        interaction:{
+                            mode:'index',
+                            intersect: false
+
+                        },
+                        scales:{
+                            x:{
+                                display:true,
+                                title:{
+                                    display:true,
+                                    text:'Day of Year 2020'
+                                }
+                            },
+                            y:{
+                                display:true,
+                                title:{
+                                    display:true,
+                                    text:'Basal Crop Coefficient 2020'
+                                }
+                            },
+                            
+                            
+                        }
+                    }
+                }
+                // we can create our chart now 
+                let chart2 =new Chart(document.getElementById('canvas2'),options)
+            });
+            //chart1.render();
+            //chart2.render();
+
+        </script>
+    </body>
+</html>
