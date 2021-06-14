@@ -1,6 +1,4 @@
-azure-common==1.1.27
 azure-nspkg==3.0.2
-azure-storage==0.37.0
 azure-storage-blob==12.8.1
 Flask==2.0.1
 pylint==2.8.3
