@@ -43,6 +43,8 @@ def upload():
 @app.route('/')
 def home():
     return render_template('index.html')
+
+
 @app.route('/calculate')
 def calculate():
     return render_template('chart.html')
